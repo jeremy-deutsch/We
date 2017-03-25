@@ -73,43 +73,32 @@ public class PlayerController : MonoBehaviour {
                     currentDir = Direction.North;
                 }
 
-                switch (currentDir)
+                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, currentDir.GetVector(), 1.0f);
+                if (hit.collider == null)
                 {
-                    case Direction.North:
-                        // play the North walking animation
-                        break;
-                    case Direction.South:
-                        // play the South walking animation
-                        break;
-                    case Direction.East:
-                        // play the East walking animation
-                        break;
-                    case Direction.West:
-                        // play the West walking animation
-                        break;
+                    switch (currentDir)
+                    {
+                        case Direction.North:
+                            // play the North walking animation
+                            break;
+                        case Direction.South:
+                            // play the South walking animation
+                            break;
+                        case Direction.East:
+                            // play the East walking animation
+                            break;
+                        case Direction.West:
+                            // play the West walking animation
+                            break;
+                    }
+
+                    StartCoroutine(Move(this.transform));
                 }
 
-                StartCoroutine(Move(this.transform));
             }
             else if (Input.GetKeyDown(KeyCode.Space))
             {
-                Vector2 rayDir = Vector2.zero;
-                switch (currentDir)
-                {
-                    case Direction.North:
-                        rayDir = Vector2.up;
-                        break;
-                    case Direction.South:
-                        rayDir = Vector2.down;
-                        break;
-                    case Direction.East:
-                        rayDir = Vector2.right;
-                        break;
-                    case Direction.West:
-                        rayDir = Vector2.left;
-                        break;
-                }
-                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, rayDir);
+                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, currentDir.GetVector());
                 if (hit.collider != null)
                 {
                     GameObject otherThing = hit.collider.gameObject;
@@ -159,7 +148,7 @@ public enum Direction
     West
 }
 
-static class DirectionMethods
+public static class DirectionMethods
 {
     public static Direction Opposite(this Direction dir)
     {
@@ -173,6 +162,21 @@ static class DirectionMethods
                 return Direction.West;
             default:
                 return Direction.East;
+        }
+    }
+
+    public static Vector2 GetVector(this Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.North:
+                return Vector2.up;
+            case Direction.South:
+                return Vector2.down;
+            case Direction.East:
+                return Vector2.right;
+            default:
+                return Vector2.left;
         }
     }
 }
