@@ -40,6 +40,23 @@ public class PlayerController : MonoBehaviour {
             }
             if (input != Vector2.zero)
             {
+                if (input.x < 0)
+                {
+                    currentDir = Direction.West;
+                }
+                if (input.x > 0)
+                {
+                    currentDir = Direction.East;
+                }
+                if (input.y < 0)
+                {
+                    currentDir = Direction.South;
+                }
+                if (input.y > 0)
+                {
+                    currentDir = Direction.North;
+                }
+
                 StartCoroutine(Move(this.transform));
             }
         }
