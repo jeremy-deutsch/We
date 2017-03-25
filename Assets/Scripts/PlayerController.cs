@@ -12,9 +12,11 @@ public class PlayerController : MonoBehaviour {
     public bool isPossessed { get; set; }
 
     private SpriteRenderer spRender;
+	private Animator anim;
 
     private Vector2 input;
-    private bool isMoving;
+	public bool isMoving { get; set; }
+	private bool wasMoving;
     private Vector3 startPos;
     private Vector3 endPos;
     private float t;
@@ -24,7 +26,9 @@ public class PlayerController : MonoBehaviour {
     {
         this.isMoving = false;
         this.spRender = this.gameObject.GetComponent<SpriteRenderer>();
+		this.anim = GetComponent<Animator> ();
         this.currentDir = startingDirection;
+		this.stand ();
         if (this.startPossessed)
         {
             this.BecomePossessed();
@@ -54,61 +58,68 @@ public class PlayerController : MonoBehaviour {
             {
                 input.x = 0;
             }
-            if (input != Vector2.zero)
-            {
-                if (input.x < 0)
-                {
-                    currentDir = Direction.West;
-                }
-                if (input.x > 0)
-                {
-                    currentDir = Direction.East;
-                }
-                if (input.y < 0)
-                {
-                    currentDir = Direction.South;
-                }
-                if (input.y > 0)
-                {
-                    currentDir = Direction.North;
-                }
+			if (input != Vector2.zero) {
+				if (input.x < 0) {
+					currentDir = Direction.West;
+				}
+				if (input.x > 0) {
+					currentDir = Direction.East;
+				}
+				if (input.y < 0) {
+					currentDir = Direction.South;
+				}
+				if (input.y > 0) {
+					currentDir = Direction.North;
+				
+				}
 
-                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, currentDir.GetVector(), 1.0f);
-                if (hit.collider == null)
-                {
-                    switch (currentDir)
-                    {
-                        case Direction.North:
+
+				if (!this.HasObstacle (currentDir)) {
+					switch (currentDir) {
+					case Direction.North:
+						if (!wasMoving) {
+							anim.SetTrigger ("north");
+						}
                             // play the North walking animation
-                            break;
-                        case Direction.South:
+						break;
+
+					case Direction.South:
+						if (!wasMoving) {
+							anim.SetTrigger ("south");
+						}
                             // play the South walking animation
-                            break;
-                        case Direction.East:
+						break;
+					case Direction.East:
+						if (!wasMoving) {
+							anim.SetTrigger ("east");
+						}
                             // play the East walking animation
-                            break;
-                        case Direction.West:
+						break;
+					case Direction.West:
+						if (!wasMoving) {
+							anim.SetTrigger ("west");
+						}
                             // play the West walking animation
-                            break;
-                    }
+						break;
+					}
 
-                    StartCoroutine(Move(this.transform));
-                }
+					StartCoroutine (Move (this.transform));
+				}
 
-            }
-            else if (Input.GetKeyDown(KeyCode.Space))
-            {
-                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, currentDir.GetVector());
-                if (hit.collider != null)
-                {
-                    GameObject otherThing = hit.collider.gameObject;
-                    if (otherThing.CompareTag("Person") && 
-                        otherThing.GetComponent<PlayerController>().currentDir == this.currentDir.Opposite())
-                    {
-                        otherThing.GetComponent<PlayerController>().BecomePossessed();
-                    }
-                }
-            }
+			} else if (Input.GetKeyDown (KeyCode.Space)) {
+				RaycastHit2D hit = Physics2D.Raycast (this.transform.position, currentDir.GetVector ());
+				if (hit.collider != null) {
+					GameObject otherThing = hit.collider.gameObject;
+					if (otherThing.CompareTag ("Person") &&
+					                   otherThing.GetComponent<PlayerController> ().currentDir == this.currentDir.Opposite ()) {
+						otherThing.GetComponent<PlayerController> ().BecomePossessed ();
+					}
+				}
+			} else if (wasMoving) {
+				wasMoving = false;
+				this.stand ();
+			}
+
         }
 
 	}
@@ -129,6 +140,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         isMoving = false;
+		wasMoving = true;
         yield return 0;
     }
 
@@ -137,6 +149,23 @@ public class PlayerController : MonoBehaviour {
         this.isPossessed = true;
     }
 
+
+	public bool HasObstacle(Direction dir) {
+		RaycastHit2D hit = Physics2D.Raycast(this.transform.position + 
+			new Vector3(currentDir.GetVector().x, currentDir.GetVector().y, 0), currentDir.GetVector(), 0.9f);
+		if (hit.collider == null) {
+			return false;
+		} else if (hit.collider.gameObject.CompareTag ("Person") &&
+		         hit.collider.gameObject.GetComponent<PlayerController> ().isPossessed) {
+			return hit.collider.gameObject.GetComponent<PlayerController> ().HasObstacle (dir);
+		} else {
+			return true;
+		}
+	}
+
+	private void stand() {
+
+	}
 }
 
 
