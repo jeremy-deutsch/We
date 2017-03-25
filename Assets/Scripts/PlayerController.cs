@@ -8,10 +8,11 @@ public class PlayerController : MonoBehaviour {
     public Direction startingDirection;
     public bool startPossessed;
 
+    public Direction currentDir { get; set; }
+    public bool isPossessed { get; set; }
+
     private SpriteRenderer spRender;
 
-    private bool possessed;
-    private Direction currentDir;
     private Vector2 input;
     private bool isMoving;
     private Vector3 startPos;
@@ -23,13 +24,14 @@ public class PlayerController : MonoBehaviour {
     {
         this.isMoving = false;
         this.spRender = this.gameObject.GetComponent<SpriteRenderer>();
+        this.currentDir = startingDirection;
         if (this.startPossessed)
         {
             this.BecomePossessed();
         }
         else
         {
-            this.possessed = false;
+            this.isPossessed = false;
         }
     }
 
@@ -41,7 +43,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-        if (this.possessed && !this.isMoving)
+        if (this.isPossessed && !this.isMoving)
         {
             input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
             if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
@@ -89,6 +91,35 @@ public class PlayerController : MonoBehaviour {
 
                 StartCoroutine(Move(this.transform));
             }
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Vector2 rayDir = Vector2.zero;
+                switch (currentDir)
+                {
+                    case Direction.North:
+                        rayDir = Vector2.up;
+                        break;
+                    case Direction.South:
+                        rayDir = Vector2.down;
+                        break;
+                    case Direction.East:
+                        rayDir = Vector2.right;
+                        break;
+                    case Direction.West:
+                        rayDir = Vector2.left;
+                        break;
+                }
+                RaycastHit2D hit = Physics2D.Raycast(this.transform.position, rayDir);
+                if (hit.collider != null)
+                {
+                    GameObject otherThing = hit.collider.gameObject;
+                    if (otherThing.CompareTag("Person") && 
+                        otherThing.GetComponent<PlayerController>().currentDir == this.currentDir.Opposite())
+                    {
+                        otherThing.GetComponent<PlayerController>().BecomePossessed();
+                    }
+                }
+            }
         }
 
 	}
@@ -114,8 +145,9 @@ public class PlayerController : MonoBehaviour {
 
     public void BecomePossessed ()
     {
-        this.possessed = true;
+        this.isPossessed = true;
     }
+
 }
 
 
@@ -125,4 +157,22 @@ public enum Direction
     South,
     East,
     West
+}
+
+static class DirectionMethods
+{
+    public static Direction Opposite(this Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.North:
+                return Direction.South;
+            case Direction.South:
+                return Direction.North;
+            case Direction.East:
+                return Direction.West;
+            default:
+                return Direction.East;
+        }
+    }
 }
