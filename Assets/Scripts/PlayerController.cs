@@ -5,8 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public float walkSpeed;
+    public Direction startingDirection;
+    public bool startPossessed;
 
-    Direction currentDir;
+    private SpriteRenderer spRender;
+
+    private bool possessed;
+    private Direction currentDir;
     private Vector2 input;
     private bool isMoving;
     private Vector3 startPos;
@@ -17,6 +22,15 @@ public class PlayerController : MonoBehaviour {
     private void Awake()
     {
         this.isMoving = false;
+        this.spRender = this.gameObject.GetComponent<SpriteRenderer>();
+        if (this.startPossessed)
+        {
+            this.BecomePossessed();
+        }
+        else
+        {
+            this.possessed = false;
+        }
     }
 
     // Use this for conditional initialization
@@ -27,7 +41,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-        if (!this.isMoving)
+        if (this.possessed && !this.isMoving)
         {
             input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
             if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
@@ -57,13 +71,29 @@ public class PlayerController : MonoBehaviour {
                     currentDir = Direction.North;
                 }
 
+                switch (currentDir)
+                {
+                    case Direction.North:
+                        // play the North walking animation
+                        break;
+                    case Direction.South:
+                        // play the South walking animation
+                        break;
+                    case Direction.East:
+                        // play the East walking animation
+                        break;
+                    case Direction.West:
+                        // play the West walking animation
+                        break;
+                }
+
                 StartCoroutine(Move(this.transform));
             }
         }
 
 	}
 
-    public IEnumerator Move(Transform entity)
+    public IEnumerator Move (Transform entity)
     {
         this.isMoving = true;
         this.startPos = entity.position;
@@ -81,10 +111,15 @@ public class PlayerController : MonoBehaviour {
         isMoving = false;
         yield return 0;
     }
+
+    public void BecomePossessed ()
+    {
+        this.possessed = true;
+    }
 }
 
 
-enum Direction
+public enum Direction
 {
     North,
     South,
