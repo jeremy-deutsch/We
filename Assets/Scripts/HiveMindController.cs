@@ -72,6 +72,7 @@ public class HiveMindController : MonoBehaviour {
 			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
 				
 				SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex + 1);
+
 			}
 			isWinChecking = false;
 		}
