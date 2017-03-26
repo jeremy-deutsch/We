@@ -4,12 +4,21 @@ using UnityEngine;
 
 public class HiveMindController : MonoBehaviour {
 
+	public PlayerController exitPerson { get; set; }
+
 	private Vector2 input;
 	private PlayerController[] children;
+	private bool isWinChecking;
+
+	void Awake() {
+		children = GetComponentsInChildren<PlayerController> ();
+		isWinChecking = false;
+		exitPerson = null;
+	}
 
 	// Use this for initialization
 	void Start () {
-		children = GetComponentsInChildren<PlayerController> ();
+		
 	}
 	
 	// Update is called once per frame
@@ -42,11 +51,19 @@ public class HiveMindController : MonoBehaviour {
 	}
 
 	public void CheckHasWon() {
-		foreach (PlayerController pc in children) {
-			if (!pc.isPossessed) {
-				return;
+		if (!isWinChecking) {
+			isWinChecking = true;
+			foreach (PlayerController pc in children) {
+				if (!pc.isPossessed) {
+					isWinChecking = false;
+					return;
+				}
+				pc.isChecked = false;
 			}
+			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
+				// win the level
+			}
+			isWinChecking = false;
 		}
-
 	}
 }

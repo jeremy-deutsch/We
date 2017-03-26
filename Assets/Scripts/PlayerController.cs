@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour {
 
     public Direction currentDir { get; set; }
     public bool isPossessed { get; set; }
+	public bool isChecked { get; set; }
 
 	public Sprite[] standingSprites; // up, down, right, left
 
@@ -155,9 +156,8 @@ public class PlayerController : MonoBehaviour {
 
         isMoving = false;
 		wasMoving = true;
-		if (this.touchingExit) {
-			GetComponentInParent<HiveMindController> ().CheckHasWon ();
-		}
+		GetComponentInParent<HiveMindController> ().CheckHasWon (this);
+		
         yield return 0;
     }
 
@@ -217,14 +217,31 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.CompareTag ("Exit")) {
+			GetComponentInParent<HiveMindController> ().exitPerson = this;
 			this.touchingExit = true;
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D other) {
 		if (other.CompareTag ("Exit")) {
+			GetComponentInParent<HiveMindController> ().exitPerson = null;
 			this.touchingExit = false;
 		}
+	}
+
+	public int ChildrenAround() {
+		this.isChecked = true;
+		int childCount = 1;
+		Direction[] dirs = new Direction[] {Direction.North, Direction.South, Direction.East, Direction.West};
+		foreach(Direction dir in dirs) {
+			RaycastHit2D hit = Physics2D.Raycast(this.transform.position + 
+				new Vector3(dir.GetVector().x, dir.GetVector().y, 0), dir.GetVector(), 0.4f);
+			if (hit.collider != null && hit.collider.gameObject.CompareTag ("Person") &&
+				!hit.collider.gameObject.GetComponent<PlayerController>().isChecked) {
+				childCount += hit.collider.gameObject.GetComponent<PlayerController>().ChildrenAround();
+			}
+		}
+		return childCount;
 	}
 }
 
