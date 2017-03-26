@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour {
 
     private SpriteRenderer spRender;
 	private Animator anim;
+	private HiveMindController hm;
 
     private Vector2 input;
 	public bool isMoving { get; set; }
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour {
         this.isMoving = false;
         this.spRender = GetComponent<SpriteRenderer>();
 		this.anim = GetComponent<Animator> ();
+		this.hm = GetComponentInParent<HiveMindController> ();
 		if (this.startPossessed)
 		{
 			this.BecomePossessed();
@@ -54,21 +56,20 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if (this.isPossessed && !GetComponentInParent<HiveMindController>().AnyoneMoving())
+		if (this.isPossessed && !hm.AnyoneMoving())
         {
-            if (Input.GetKeyDown (KeyCode.Space)) {
+			if (Input.GetKeyDown (KeyCode.Space)) {
 				RaycastHit2D hit = Physics2D.Raycast (this.transform.position +
-                    new Vector3(currentDir.GetVector().x, currentDir.GetVector().y, 0), currentDir.GetVector ());
+				                   new Vector3 (currentDir.GetVector ().x, currentDir.GetVector ().y, 0), currentDir.GetVector ());
 				if (hit.collider != null) {
 					GameObject otherThing = hit.collider.gameObject;
 					if (otherThing.CompareTag ("Person") &&
-					                   otherThing.GetComponent<PlayerController> ().currentDir == this.currentDir.Opposite ()) {
+					    otherThing.GetComponent<PlayerController> ().currentDir == this.currentDir.Opposite ()) {
 						otherThing.GetComponent<PlayerController> ().BecomePossessed ();
 					}
 				}
 			} else if (wasMoving) {
 				wasMoving = false;
-				this.stand ();
 			}
 
         }
@@ -133,6 +134,8 @@ public class PlayerController : MonoBehaviour {
 				}
 
 				StartCoroutine (Move (this.transform));
+			} else {
+				stand ();
 			}
 		}
 	}
@@ -152,9 +155,16 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
 
+		hm.CheckHasWon ();
+
+		if (Input.GetAxis ("Horizontal") == 0 && Input.GetAxis ("Vertical") == 0) {
+			stand ();
+		}
+
         isMoving = false;
 		wasMoving = true;
-		GetComponentInParent<HiveMindController> ().CheckHasWon ();
+
+
 		
         yield return 0;
     }
@@ -162,6 +172,7 @@ public class PlayerController : MonoBehaviour {
     public void BecomePossessed ()
     {
         this.isPossessed = true;
+		stand ();
     }
 
 
@@ -218,14 +229,14 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.CompareTag ("Exit")) {
-			GetComponentInParent<HiveMindController> ().exitPerson = this;
+			hm.exitPerson = this;
 			this.touchingExit = true;
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D other) {
 		if (other.CompareTag ("Exit")) {
-			GetComponentInParent<HiveMindController> ().exitPerson = null;
+			hm.exitPerson = null;
 			this.touchingExit = false;
 		}
 	}
