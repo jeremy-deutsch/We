@@ -61,7 +61,7 @@ public class HiveMindController : MonoBehaviour {
 				pc.isChecked = false;
 			}
 			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
-				// win the level
+				Debug.Log ("You win!");
 			}
 			isWinChecking = false;
 		}
