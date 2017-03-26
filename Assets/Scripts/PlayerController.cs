@@ -59,19 +59,23 @@ public class PlayerController : MonoBehaviour {
                 input.x = 0;
             }
 			if (input != Vector2.zero) {
+                Direction newDir = Direction.West;
 				if (input.x < 0) {
-					currentDir = Direction.West;
+					newDir = Direction.West;
 				}
 				if (input.x > 0) {
-					currentDir = Direction.East;
+					newDir = Direction.East;
 				}
 				if (input.y < 0) {
-					currentDir = Direction.South;
+					newDir = Direction.South;
 				}
 				if (input.y > 0) {
-					currentDir = Direction.North;
-				
+					newDir = Direction.North;
 				}
+                if (currentDir != newDir) {
+                    wasMoving = false;
+                }
+                currentDir = newDir;
 
 
 				if (!this.HasObstacle (currentDir)) {
@@ -107,7 +111,8 @@ public class PlayerController : MonoBehaviour {
 				}
 
 			} else if (Input.GetKeyDown (KeyCode.Space)) {
-				RaycastHit2D hit = Physics2D.Raycast (this.transform.position, currentDir.GetVector ());
+				RaycastHit2D hit = Physics2D.Raycast (this.transform.position +
+                    new Vector3(currentDir.GetVector().x, currentDir.GetVector().y, 0), currentDir.GetVector ());
 				if (hit.collider != null) {
 					GameObject otherThing = hit.collider.gameObject;
 					if (otherThing.CompareTag ("Person") &&
@@ -152,7 +157,7 @@ public class PlayerController : MonoBehaviour {
 
 	public bool HasObstacle(Direction dir) {
 		RaycastHit2D hit = Physics2D.Raycast(this.transform.position + 
-			new Vector3(currentDir.GetVector().x, currentDir.GetVector().y, 0), currentDir.GetVector(), 0.9f);
+			new Vector3(currentDir.GetVector().x, currentDir.GetVector().y, 0), currentDir.GetVector(), 0.4f);
 		if (hit.collider == null) {
 			return false;
 		} else if (hit.collider.gameObject.CompareTag ("Person") &&
@@ -164,7 +169,20 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void stand() {
-
+        switch (currentDir) {
+            case Direction.North:
+                anim.SetTrigger("standNorth");
+                break;
+            case Direction.South:
+                anim.SetTrigger("standSouth");
+                break;
+            case Direction.East:
+                anim.SetTrigger("standEast");
+                break;
+            default:
+                anim.SetTrigger("standWest");
+                break;
+        }
 	}
 }
 
