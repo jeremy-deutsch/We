@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HiveMindController : MonoBehaviour {
 
@@ -63,7 +64,7 @@ public class HiveMindController : MonoBehaviour {
 			}
 
 			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
-				Debug.Log ("You win!");
+				SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex + 1);
 			}
 			isWinChecking = false;
 		}
