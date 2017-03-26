@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour {
     private Vector3 endPos;
     private float t;
 	private bool touchingExit;
+	private int xInt;
+	private int yInt;
+
 
     // Use this for unconditional initialization
     private void Awake()
@@ -39,8 +42,9 @@ public class PlayerController : MonoBehaviour {
 			this.isPossessed = false;
 		}
         this.currentDir = startingDirection;
+		this.xInt = (int)transform.position.x;
+		this.yInt = (int)transform.position.y;
 		this.stand ();
-        
     }
 
     // Use this for conditional initialization
@@ -102,6 +106,7 @@ public class PlayerController : MonoBehaviour {
 					if (!wasMoving) {
 						anim.SetTrigger ("north");
 					}
+					this.yInt++;
 				// play the North walking animation
 					break;
 
@@ -109,18 +114,21 @@ public class PlayerController : MonoBehaviour {
 					if (!wasMoving) {
 						anim.SetTrigger ("south");
 					}
+					this.yInt--;
 				// play the South walking animation
 					break;
 				case Direction.East:
 					if (!wasMoving) {
 						anim.SetTrigger ("east");
 					}
+					this.xInt++;
 				// play the East walking animation
 					break;
 				case Direction.West:
 					if (!wasMoving) {
 						anim.SetTrigger ("west");
 					}
+					this.xInt--;
 				// play the West walking animation
 					break;
 				}
@@ -176,16 +184,16 @@ public class PlayerController : MonoBehaviour {
 		if (!this.isPossessed) {
 			switch (currentDir) {
 			case Direction.North:
-				spRender.sprite = standingSprites [0];
+				anim.SetTrigger ("normalNorth");
 				break;
 			case Direction.South:
-				spRender.sprite = standingSprites [1];
+				anim.SetTrigger ("normalSouth");
 				break;
 			case Direction.East:
-				spRender.sprite = standingSprites [2];
+				anim.SetTrigger ("normalEast");
 				break;
 			default:
-				spRender.sprite = standingSprites [3];
+				anim.SetTrigger ("normalWest");
 				break;
 			}
 		} else {
