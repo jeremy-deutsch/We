@@ -232,6 +232,10 @@ public class PlayerController : MonoBehaviour {
 			hm.exitPerson = this;
 			this.touchingExit = true;
 		}
+		if (other.CompareTag ("Snap Out")) {
+			this.isPossessed = false;
+			stand ();
+		}
 	}
 
 	void OnTriggerExit2D(Collider2D other) {

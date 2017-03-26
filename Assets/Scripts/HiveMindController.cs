@@ -72,8 +72,19 @@ public class HiveMindController : MonoBehaviour {
 			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
 				
 				SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex + 1);
+
 			}
 			isWinChecking = false;
 		}
+	}
+
+	public int PossessedChildren() {
+		int result = 0;
+		foreach (PlayerController pc in children) {
+			if (pc.isPossessed) {
+				result++;
+			}
+		}
+		return result;
 	}
 }
