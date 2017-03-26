@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour {
     public bool isPossessed { get; set; }
 	public bool isChecked { get; set; }
 
-	public Sprite[] standingSprites; // up, down, right, left
-
     private SpriteRenderer spRender;
 	private Animator anim;
 
@@ -156,7 +154,7 @@ public class PlayerController : MonoBehaviour {
 
         isMoving = false;
 		wasMoving = true;
-		GetComponentInParent<HiveMindController> ().CheckHasWon (this);
+		GetComponentInParent<HiveMindController> ().CheckHasWon ();
 		
         yield return 0;
     }
@@ -175,6 +173,8 @@ public class PlayerController : MonoBehaviour {
 		} else if (hit.collider.gameObject.CompareTag ("Person") &&
 		         hit.collider.gameObject.GetComponent<PlayerController> ().isPossessed) {
 			return hit.collider.gameObject.GetComponent<PlayerController> ().HasObstacle (dir);
+		} else if (hit.collider.gameObject.CompareTag("Exit")) {
+			return false;
 		} else {
 			return true;
 		}
@@ -235,7 +235,7 @@ public class PlayerController : MonoBehaviour {
 		Direction[] dirs = new Direction[] {Direction.North, Direction.South, Direction.East, Direction.West};
 		foreach(Direction dir in dirs) {
 			RaycastHit2D hit = Physics2D.Raycast(this.transform.position + 
-				new Vector3(dir.GetVector().x, dir.GetVector().y, 0), dir.GetVector(), 0.4f);
+				new Vector3(dir.GetVector().x, dir.GetVector().y, 0), dir.GetVector(), 0.7f);
 			if (hit.collider != null && hit.collider.gameObject.CompareTag ("Person") &&
 				!hit.collider.gameObject.GetComponent<PlayerController>().isChecked) {
 				childCount += hit.collider.gameObject.GetComponent<PlayerController>().ChildrenAround();
