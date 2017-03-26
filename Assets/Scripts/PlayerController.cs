@@ -184,21 +184,6 @@ public class PlayerController : MonoBehaviour {
 		if (!this.isPossessed) {
 			switch (currentDir) {
 			case Direction.North:
-				anim.SetTrigger ("normalNorth");
-				break;
-			case Direction.South:
-				anim.SetTrigger ("normalSouth");
-				break;
-			case Direction.East:
-				anim.SetTrigger ("normalEast");
-				break;
-			default:
-				anim.SetTrigger ("normalWest");
-				break;
-			}
-		} else {
-			switch (currentDir) {
-			case Direction.North:
 				anim.SetTrigger ("standNorth");
 				break;
 			case Direction.South:
@@ -211,8 +196,24 @@ public class PlayerController : MonoBehaviour {
 				anim.SetTrigger ("standWest");
 				break;
 			}
+		} else {
+			switch (currentDir) {
+			case Direction.North:
+				anim.SetTrigger ("standPossessedNorth");
+				break;
+			case Direction.South:
+				anim.SetTrigger ("standPossessedSouth");
+				break;
+			case Direction.East:
+				anim.SetTrigger ("standPossessedEast");
+				break;
+			default:
+				anim.SetTrigger ("standPossessedWest");
+				break;
+			}
 		}
 	}
+
 
 
 	void OnTriggerEnter2D(Collider2D other) {
@@ -235,7 +236,7 @@ public class PlayerController : MonoBehaviour {
 		Direction[] dirs = new Direction[] {Direction.North, Direction.South, Direction.East, Direction.West};
 		foreach(Direction dir in dirs) {
 			RaycastHit2D hit = Physics2D.Raycast(this.transform.position + 
-				new Vector3(dir.GetVector().x, dir.GetVector().y, 0), dir.GetVector(), 0.7f);
+				new Vector3(dir.GetVector().x, dir.GetVector().y, 0), dir.GetVector(), 0.4f);
 			if (hit.collider != null && hit.collider.gameObject.CompareTag ("Person") &&
 				!hit.collider.gameObject.GetComponent<PlayerController>().isChecked) {
 				childCount += hit.collider.gameObject.GetComponent<PlayerController>().ChildrenAround();

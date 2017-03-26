@@ -53,6 +53,7 @@ public class HiveMindController : MonoBehaviour {
 	public void CheckHasWon() {
 		if (!isWinChecking) {
 			isWinChecking = true;
+			Debug.Log ("Checking winner");
 			foreach (PlayerController pc in children) {
 				if (!pc.isPossessed) {
 					isWinChecking = false;
@@ -60,6 +61,7 @@ public class HiveMindController : MonoBehaviour {
 				}
 				pc.isChecked = false;
 			}
+
 			if (exitPerson != null && exitPerson.ChildrenAround () == children.Length) {
 				Debug.Log ("You win!");
 			}
