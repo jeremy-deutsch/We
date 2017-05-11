@@ -24,7 +24,7 @@ public class HiveMindController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey(KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
 			Application.Quit ();
 		}
 		if (!AnyoneMoving()) {

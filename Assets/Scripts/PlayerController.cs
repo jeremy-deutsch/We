@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour {
 				switch (currentDir) {
 				case Direction.North:
 					if (!wasMoving) {
-						anim.SetTrigger ("north");
+						anim.Play ("north");
 					}
 					this.yInt++;
 				// play the North walking animation
@@ -112,26 +112,27 @@ public class PlayerController : MonoBehaviour {
 
 				case Direction.South:
 					if (!wasMoving) {
-						anim.SetTrigger ("south");
+						anim.Play ("south");
 					}
 					this.yInt--;
 				// play the South walking animation
 					break;
 				case Direction.East:
 					if (!wasMoving) {
-						anim.SetTrigger ("east");
+						anim.Play ("east");
 					}
 					this.xInt++;
 				// play the East walking animation
 					break;
 				case Direction.West:
 					if (!wasMoving) {
-						anim.SetTrigger ("west");
+						anim.Play ("west");
 					}
 					this.xInt--;
 				// play the West walking animation
 					break;
 				}
+
 
 				StartCoroutine (Move (this.transform));
 			} else {
@@ -142,7 +143,7 @@ public class PlayerController : MonoBehaviour {
 
     public IEnumerator Move (Transform entity)
     {
-        this.isMoving = true;
+		this.isMoving = true;
         this.startPos = entity.position;
         this.t = 0;
 
@@ -195,31 +196,31 @@ public class PlayerController : MonoBehaviour {
 		if (!this.isPossessed) {
 			switch (currentDir) {
 			case Direction.North:
-				anim.SetTrigger ("standNorth");
+				anim.Play ("standNorth");
 				break;
 			case Direction.South:
-				anim.SetTrigger ("standSouth");
+				anim.Play ("standSouth");
 				break;
 			case Direction.East:
-				anim.SetTrigger ("standEast");
+				anim.Play ("standEast");
 				break;
 			default:
-				anim.SetTrigger ("standWest");
+				anim.Play ("standWest");
 				break;
 			}
 		} else {
 			switch (currentDir) {
 			case Direction.North:
-				anim.SetTrigger ("standPossessedNorth");
+				anim.Play ("standPossessedNorth");
 				break;
 			case Direction.South:
-				anim.SetTrigger ("standPossessedSouth");
+				anim.Play ("standPossessedSouth");
 				break;
 			case Direction.East:
-				anim.SetTrigger ("standPossessedEast");
+				anim.Play ("standPossessedEast");
 				break;
 			default:
-				anim.SetTrigger ("standPossessedWest");
+				anim.Play ("standPossessedWest");
 				break;
 			}
 		}
@@ -301,4 +302,19 @@ public static class DirectionMethods
                 return Vector2.left;
         }
     }
+
+	public static int IntVal(this Direction dir)
+	{
+		switch (dir)
+		{
+		case Direction.North:
+			return 0;
+		case Direction.South:
+			return 1;
+		case Direction.East:
+			return 2;
+		default:
+			return 3;
+		}
+	}
 }
